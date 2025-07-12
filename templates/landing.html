@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto p-8">
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold mb-6 text-gray-800">Welcome to ReFitt</h1>
+        <p class="text-xl text-gray-600 mb-8">Swap, Redeem, and Refresh Your Wardrobe</p>
+        <div class="space-x-4">
+            <a href="{% url 'rewear:add_item' %}" class="bg-[var(--highlight)] hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105 shadow-lg">Start Swapping</a>
+            <a href="{% url 'rewear:browse_all_items' %}" class="bg-[var(--accent)] hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105 shadow-lg">Browse All Items</a>
+        </div>
+    </div>
+    
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold mb-8 text-gray-800 text-center">Featured Items</h2>
+        {% if featured_items %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for item in featured_items %}
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                    {% else %}
+                        <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                            <span class="text-gray-500">No Image</span>
+                        </div>
+                    {% endif %}
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">{{ item.title }}</h3>
+                    <p class="text-gray-600 mb-4">{{ item.description|truncatewords:20 }}</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-lg font-semibold text-gray-800">₹{{ item.price }}</span>
+                        <span class="text-sm text-gray-500">{{ item.category }}</span>
+                    </div>
+                    <a href="{% url 'rewear:item_detail' item.id %}" class="inline-block bg-[var(--highlight)] hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition duration-300">View Details</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">👕</div>
+                <h3 class="text-2xl font-semibold text-gray-600 mb-4">No items available yet</h3>
+                <p class="text-gray-500 mb-6">Be the first to add an item to the marketplace!</p>
+                <a href="{% url 'rewear:add_item' %}" class="bg-[var(--highlight)] hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105 shadow-lg">
+                    Add Your First Item
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

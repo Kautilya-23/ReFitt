@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-4xl font-bold mb-8 text-gray-800 text-center">Browse All Items</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for item in items %}
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2 text-gray-800">{{ item.title }}</h3>
+                <p class="text-gray-600 text-sm mb-3">{{ item.description|truncatewords:15 }}</p>
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-lg font-semibold text-gray-800">₹{{ item.price }}</span>
+                    <span class="text-sm text-gray-500">{{ item.category }}</span>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm text-gray-500">{{ item.size }}</span>
+                    <span class="text-sm text-gray-500">{{ item.condition }}</span>
+                </div>
+                <div class="flex space-x-2 mb-4">
+                    {% for tag in item.tags.split|slice:":3" %}
+                        <span class="bg-[var(--accent)] text-white px-2 py-1 rounded-full text-xs">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'rewear:item_detail' item.id %}" class="flex-1 bg-[var(--highlight)] hover:bg-gray-700 text-white text-center py-2 rounded-lg font-medium transition duration-300">View Details</a>
+                    {% if user.is_authenticated %}
+                        {% if user == item.user %}
+                            <a href="{% url 'rewear:delete_item' item.id %}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition duration-300">Delete</a>
+                        {% else %}
+                            <form method="post" action="{% url 'rewear:add_to_cart' item.id %}" class="flex-1">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full bg-[var(--accent)] hover:bg-gray-600 text-white py-2 rounded-lg font-medium transition duration-300">Add to Cart</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if user.is_authenticated %}
+    <div class="text-center mt-12">
+        <a href="{% url 'rewear:add_item' %}" class="bg-[var(--highlight)] hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105 shadow-lg">List Your Item</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
